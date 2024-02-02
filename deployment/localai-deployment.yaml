@@ -1,0 +1,30 @@
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: localai-deployment-phi-ds5
+endpoint_name: localai-endpoint
+model:
+  azureml:phi-2:1
+  # name: phi-2
+  # version: 1
+  # path: ./half_plus_two
+model_mount_path: /build/models
+# environment_variables:
+#   MODEL_BASE_PATH: /var/azureml-app/azureml-models/tfserving-mounted/{{MODEL_VERSION}}
+#   MODEL_NAME: half_plus_two
+environment:
+  #name: tfserving
+  #version: 1
+  image: quay.io/go-skynet/local-ai:latest
+  inference_config:
+    liveness_route:
+      port: 8080
+      path: /v1/models/
+    readiness_route:
+      port: 8080
+      path: /v1/models/
+    scoring_route:
+      port: 8080
+      path: /v1/completions
+instance_type: Standard_DS5_v2
+instance_count: 1
+request_settings:
+  request_timeout_ms: 100000
