@@ -1,5 +1,5 @@
 $schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
-name: localai-deployment-phi-ds5
+name: localai-deployment-chat-endpoint
 endpoint_name: localai-endpoint
 model:
   azureml:phi-2:1
@@ -23,7 +23,7 @@ environment:
       path: /v1/models/
     scoring_route:
       port: 8080
-      path: /v1/completions
+      path: /v1/chat/completions
 instance_type: Standard_DS5_v2
 instance_count: 1
 request_settings:
