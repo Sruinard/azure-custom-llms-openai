@@ -1,50 +1,56 @@
-import openai
-import requests
-import json
 import os
+import dataclasses
+
+import openai
 from dotenv import load_dotenv
 
-load_dotenv()
 
-base_url = "https://localai-endpoint.swedencentral.inference.ml.azure.com"
-model_path = "/v1/models"
-completions_path = "/v1/chat/completions"
-
-
-
-api_key = os.environ.get("AZURE_ML_DEPLOYMENT_KEY")
-if not api_key:
-    raise Exception("A key should be provided to invoke the endpoint")
-
-# The azureml-model-deployment header will force the request to go to a specific deployment.
-# Remove this header to have the request observe the endpoint traffic rules
-headers = {'Content-Type':'application/json', 'Authorization':('Bearer '+ api_key), 'azureml-model-deployment': 'localai-deployment-phi-ds5' }
-
-available_models = requests.get(base_url + model_path, headers=headers).json()["data"]
-
-if available_models[0]["id"] != "phi-2":
-    raise Exception("Model not found")
-else:
-    print("Model found")
+@dataclasses.dataclass
+class ChatConfig:
+    base_url: str
+    model_name: str
+    api_key: str
 
 
-import openai
+def load_config() -> ChatConfig:
+    base_url = os.environ.get("AZURE_ML_BASE_URL")
+    model_name = os.environ.get("AZURE_ML_MODEL_NAME")
+    api_key = os.environ.get("AZURE_ML_DEPLOYMENT_KEY")
 
-# API key does not need to be valid
-openai.base_url = base_url
-openai.api_key = 'sk-XXXXXXXXXXXXXXXXXXXX'
-openai.api_key = api_key
+    return ChatConfig(base_url=base_url, model_name=model_name, api_key=api_key)
 
 
-model_name = "phi-2"
+class AzureMLChat:
+    def __init__(self, cfg: ChatConfig):
+        self.cfg = cfg
+        self.headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {cfg.api_key}",
+        }
+        openai.base_url = cfg.base_url
+        openai.api_key = cfg.api_key
 
-completion = openai.chat.completions.create(
-    model=model_name,
-    messages=[
-        {
-            "role": "user",
-            "content": "Hi, how are you?",
-        },
-    ],
-)
-print(completion.choices[0].message.content)
+    def invoke(self, user_input: str) -> str:
+        completion = openai.chat.completions.create(
+            model=self.cfg.model_name,
+            messages=[
+                {
+                    "role": "user",
+                    "content": user_input,
+                },
+            ],
+        )
+        return completion.choices[0].message.content
+
+
+if __name__ == "__main__":
+    print("Loading config...")
+    load_dotenv()
+    cfg = load_config()
+    print("Done.")
+
+    print("Invoking AzureML...")
+    chat = AzureMLChat(cfg)
+    user_input = "Tell me something about Azure Machine Learning"
+    response = chat.invoke(user_input=user_input)
+    print(user_input, "=>", response)

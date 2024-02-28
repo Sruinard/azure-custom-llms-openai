@@ -5,25 +5,30 @@
 
 # arg_1 = workspace_name, arg_2 = resource_group_name, arg_3 = location
 
-WORKSPACE = $1
-RESOURCE_GROUP = $2
-LOCATION = $3
+WORKSPACE=$1
+RESOURCE_GROUP=$2
+LOCATION=$3
 
 # echo start of deployment
 
 echo "Starting deployment of azure resources..."
 
 # Create a resource group
+echo "Creating resource group..."
 az group create --name $RESOURCE_GROUP --location $LOCATION
+echo "Done."
 
 # Create a workspace
-az ml workspace create --workspace-name $WORKSPACE --resource-group $RESOURCE_GROUP --location $LOCATION
+echo "Creating workspace..."
+az ml workspace create --name $WORKSPACE --resource-group $RESOURCE_GROUP --location $LOCATION
+echo "Done."
 
 # Get the workspace details
-az ml workspace show --resource-group $RESOURCE_GROUP --workspace-name $WORKSPACE
+az ml workspace show --resource-group $RESOURCE_GROUP --name $WORKSPACE
 
 # configure defaults
-az configure --defaults group=$RESOURCE_GROUP workspace=$WORKSPACE location=$LOCATION
+echo "Configuring defaults..."
+az configure --defaults group=$RESOURCE_GROUP name=$WORKSPACE location=$LOCATION
 
 # echo end of deployment
 echo "Done."
