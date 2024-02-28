@@ -24,6 +24,12 @@ az extension update -n ml
 
 Note that deployment can take some time. Large model uploads can result in errors if the network connection is unstable.
 
+To run the deployment:
+
+```bash
+./scripts/main.sh
+```
+
 ## Inference
 
 Set the environment variable in the .env file. You can refer to the .env.example file for an example.
