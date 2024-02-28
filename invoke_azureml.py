@@ -27,19 +27,6 @@ if available_models[0]["id"] != "phi-2":
 else:
     print("Model found")
 
-# model_name = "phi-2"
-# data = {
-#     "model": model_name,
-#     "messages": [
-#         {
-#             "role": "user",
-#             "content": "Hi, how are you?",
-#         },
-#     ],
-# }
-    
-# completion = requests.post(base_url + completions_path, headers=headers, data=json.dumps(data)).json()
-# print(completion)
 
 import openai
 
