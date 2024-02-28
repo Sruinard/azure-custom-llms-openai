@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # run this script using ./scripts/main.sh <workspace_name> <resource_group_name> <location>
+# e.g. ./scripts/main.sh csuazureopensource csu-nl-azure-opensource westeurope
 
 # arg_1 = workspace_name, arg_2 = resource_group_name, arg_3 = location
 
